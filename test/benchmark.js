@@ -1,7 +1,12 @@
 "use strict";
 
+/* 
+ * This test only demonstrates the overhead of the cache.
+ */
+
 var obcache = require('../index');
 var cache = new obcache.Create();
+var rcache = new obcache.Create({ redis: { port: 6379 }, id: 0 });
 var Benchmark = require('benchmark');
 var suite = new Benchmark.Suite();
 
@@ -12,11 +17,15 @@ var suite = new Benchmark.Suite();
     });
   };
   var wrapped = cache.wrap(original);
+  var rwrapped = rcache.wrap(original);
 
   suite.add('uncached', function() {
     original(5,function(){});
   })
   .add('cached', function() {
+    wrapped(5,function() {});
+  })
+  .add('redis', function() {
     wrapped(5,function() {});
   })
   .on('cycle', function(event) {

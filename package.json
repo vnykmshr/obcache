@@ -1,10 +1,10 @@
 {
   "name": "obcache",
-  "version": "0.0.4",
+  "version": "0.0.17",
   "description": "Object Caching",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec ./test/test.js"
   },
   "author": "Qasim Zaidi",
   "license": "BSD",
