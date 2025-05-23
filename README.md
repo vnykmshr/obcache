@@ -10,7 +10,8 @@ Usage
 var obcache = require('obcache');
 
 // create a cache with max 10000 items and a TTL of 300 seconds
-var cache = new obcache.Create({ max: 10000, maxAge: 300 });
+var cache = new obcache.Create({ max: 10000, ttl: 300000 }); // maxAge is now ttl, and in milliseconds
+// If no options for max, maxSize, or ttl are provided, the cache will default to max: 1000 items.
 ```
 
 Then wrap your original function like this
@@ -33,14 +34,17 @@ API
 ---
 
 ### obcache.Create
-Creates a new cache and returns it
+Creates a new cache and returns it.
+`obcache.Create(options)` now requires `options` to include `max`, `ttl`, or `maxSize`. If none of these are provided, a default of `max: 1000` items will be used.
+Note: `lru-cache` v11 uses `ttl` in milliseconds instead of `maxAge` in seconds.
 
 ### cache.wrap 
 Wraps a given function and returns a cached version of it.
-Functions to be wrapped must have a callback function as the last argument. The callback function is expected to recieve 2 arguments - err and data. data gets stored in the cache.
+Functions to be wrapped must have a callback function as the last argument. The callback function is expected to recieve 2 arguments - err and data. `data` gets stored in the cache.
+`obcache` now correctly supports caching and retrieving `undefined` values.
 Sometimes, you may want to use a different value of this inside the caller function. cache.wrap has an optional second argument which becomes the this object when calling the original function.
 
-The first n-1 arguments are used to create the key. Subsequently, when the wrapped function is called with the same n arguments, it would lookup the key in LRU, and if found, call the callback with the associated data. It is expected that the callback will never modified the returned data, as any modifications of the original will change the object in cache. 
+The first n-1 arguments are used to create the key. Subsequently, when the wrapped function is called with the same n arguments, it would lookup the key in LRU, and if found, call the callback with the associated data. It is expected that the callback will never modified the returned data, as any modifications of the original will change the object in cache.
 
 ### cache.debug
 
